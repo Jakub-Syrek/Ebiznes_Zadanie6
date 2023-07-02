@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"fmt"
+
 	"github.com/rs/cors"
 )
 
@@ -16,11 +17,11 @@ type Product struct {
 }
 
 type Payment struct {
-	ID          string  `json:"id"`
-	Amount      float64 `json:"amount"`
-	CardNumber  string  `json:"cardNumber"`
-	CardExpiry  string  `json:"cardExpiry"`
-	CardCVV     string  `json:"cardCvv"`
+	ID         string  `json:"id"`
+	Amount     float64 `json:"amount"`
+	CardNumber string  `json:"cardNumber"`
+	CardExpiry string  `json:"cardExpiry"`
+	CardCVV    string  `json:"cardCvv"`
 }
 
 var products = []Product{
@@ -30,6 +31,11 @@ var products = []Product{
 }
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(products)
 	if err != nil {
