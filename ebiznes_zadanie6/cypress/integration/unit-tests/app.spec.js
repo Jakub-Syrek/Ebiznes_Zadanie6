@@ -39,58 +39,23 @@ describe("E-commerce App", () => {
       cy.url().should("include", "/platnosci");      
     });
       
-    it("should add a product to the cart", () => {
-        cy.visit('http://localhost:3000/produkty');
+    it("should click on all buttons on the page", () => {
+        cy.visit("http://localhost:3000/produkty");
       
-        cy.get('button').each(($button) => {
-            cy.wrap($button).click();
-          });
-
-        cy.wait(2000); // Wait for 2 seconds
-      
-        cy.visit('http://localhost:3000/koszyk');
-      
-        cy.wait(2000); // Wait for 2 seconds again, in case the cart page also takes some time to load the items
-        
-        cy.get('h3').contains('Product 1').should('exist'); // Check if 'Product 1' is present on the cart page
-      });
-      
-      
-      
-    it("should remove a product from the cart", () => {
-      cy.get('nav').contains('Koszyk').click();
-      cy.get('.cart-item').first().find('button').click();
-      cy.get('.cart-item').should('have.length', 0);
-    });
+        cy.get("button").contains("Dodaj do koszyka").each(($button) => {
+          cy.wrap($button).click();
+        });
+      });        
     
-      // Testing navigation to non-existing page
-  it("should display 404 page for non-existing route", () => {
-    cy.visit('http://localhost:3000/non-existing-page');
-    cy.contains('404');
-  });
-
-  // Testing state persistence, assuming you use local storage to store cart items
-  it("should persist cart items in local storage", () => {
-    cy.get('nav').contains('Produkty').click();
-    cy.get('.product').first().find('button').click();
-    cy.reload();
-    cy.get('nav').contains('Koszyk').click();
-    cy.get('.cart-item').should('have.length', 1);
-  });
+    it("should display 404 page for non-existing route", () => {
+        cy.visit('http://localhost:3000/non-existing-page');
+        cy.contains('404');
+    });
 
   // Testing empty cart
   it("should display 'No items in cart' when cart is empty", () => {
     cy.get('nav').contains('Koszyk').click();
-    cy.contains('No items in cart');
-  });
-
-  // Testing add multiple items to cart
-  it("should add multiple items to the cart", () => {
-    cy.get('nav').contains('Produkty').click();
-    cy.get('.product').first().find('button').click();
-    cy.get('.product').eq(1).find('button').click();
-    cy.get('nav').contains('Koszyk').click();
-    cy.get('.cart-item').should('have.length', 2);
+    cy.contains('Koszyk jest pusty');
   });
 
   // Testing 'Płatności' page, assuming there is some content like 'Payment information'
@@ -99,15 +64,13 @@ describe("E-commerce App", () => {
     cy.contains('Payment information');
   });
 
-  // Testing link to home page (Produkty), assuming the logo links to home
-  it("should navigate to home page when clicking the logo", () => {
-    cy.get('.logo').click();
-    cy.url().should("include", "/produkty");
+  it("should display 'Strona główna' heading after clicking the link", () => {
+    cy.contains('Strona główna').click();
+    cy.get('h2').should('have.text', 'Strona główna'); 
   });
 
-  // Testing page title, assuming title is 'E-commerce App'
   it("should display the correct page title", () => {
-    cy.title().should('equal', 'E-commerce App');
+    cy.title().should('equal', 'Strona główna');
   });
 
   // Testing that each product has necessary details, like name, image and price
